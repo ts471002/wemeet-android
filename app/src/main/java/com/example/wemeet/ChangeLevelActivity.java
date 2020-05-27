@@ -9,9 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-
 import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.VirusPoint;
@@ -20,6 +17,8 @@ import com.example.wemeet.util.ReturnVO;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,6 +37,7 @@ public class ChangeLevelActivity extends DialogFragment {
         close.setOnClickListener(v -> {
             dismiss();
             ShowVirusActivity showVirusActivity = new ShowVirusActivity();
+//            bundle.putSerializable("bug",bug);
             showVirusActivity.setArguments(bundle);
             assert getFragmentManager() != null;
             showVirusActivity.show(getFragmentManager(),"virus");
@@ -54,7 +54,8 @@ public class ChangeLevelActivity extends DialogFragment {
             int toLevel = changeLevel.getSelectedItemPosition()+1;
             assert bug != null;
             Long bugID = bug.getBugProperty().getBugID();
-            bug.setVirusPoint(new VirusPoint().setStatus(toLevel));
+//            bug.setVirusPoint(new VirusPoint().setStatus(toLevel));
+            bug.getVirusPoint().setStatus(toLevel);
             NetworkUtil.getRetrofit().create(BugInterface.class)
                     .updateBug(bugID, bug)
                     .enqueue(new Callback<ReturnVO>() {
@@ -71,9 +72,10 @@ public class ChangeLevelActivity extends DialogFragment {
 
             dismiss();
             reloadMap();
+            Bundle newBundle = getArguments();
             ShowVirusActivity showVirusActivity = new ShowVirusActivity();
-            bundle.putSerializable("bug", bug);
-            showVirusActivity.setArguments(bundle);
+            newBundle.putSerializable("bug", bug);
+            showVirusActivity.setArguments(newBundle);
             assert getFragmentManager() != null;
             showVirusActivity.show(getFragmentManager(),"virus");
         });
