@@ -59,4 +59,7 @@
     <string name="五百米">五百米内</string>
     <string name="医生身份">当前登录身份为：医生</string>
     <string name="用户身份">当前登录身份为：普通用户</string>
+    <string name="变更等级">变更等级</string>
+    <string name="选择文件上传">选择文件上传</string>
+    <string name="filepath">文件路径</string>
 </resources>
