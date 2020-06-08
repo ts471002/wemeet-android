@@ -29,9 +29,9 @@
     <string name="单项选择题">单项选择题</string>
     <string name="疫情点">疫情点</string>
     <string name="添加描述">添加描述</string>
-    <string name="no_thank_you">有没有其他想说的</string>
-    <string name="请描述一下你的症状">请描述一下你的症状</string>
-    <string name="什么时候开始出现病状">什么时候开始出现病状</string>
+    <string name="no_thank_you">其它描述</string>
+    <string name="请描述一下你的症状">症状描述</string>
+    <string name="什么时候开始出现病状">出现时间</string>
     <string name="选择时间">选择时间</string>
     <string name="种虫记录">种虫记录</string>
     <string name="捉虫记录">捉虫记录</string>

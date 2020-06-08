@@ -14,10 +14,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.example.wemeet.pojo.Bug;
@@ -33,6 +29,9 @@ import com.example.wemeet.util.ReturnVO;
 
 import java.sql.Timestamp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,6 +53,7 @@ public class AddBugActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int type = intent.getIntExtra("type", 1);
+        int role = intent.getIntExtra("role",0);
         switch (type) {
             case 1:
                 setContentView(R.layout.activity_add_bug);
@@ -81,6 +81,12 @@ public class AddBugActivity extends AppCompatActivity {
                 setContentView(R.layout.acticity_add_virus_point);
                 symptomsEditText = findViewById(R.id.editText_symptoms);
                 survivalTimeEditText = findViewById(R.id.editText_survivalTime);
+                if(role == 1){
+                    findViewById(R.id.type_group).setVisibility(View.VISIBLE);
+                }else{
+                    ((TextView)findViewById(R.id.textView_type)).append("："+"症状虫子");
+                    findViewById(R.id.type_group).setVisibility(View.GONE);
+                }
                 ((TextView) findViewById(R.id.text_question_type)).append("：" + getString(R.string.疫情点));
                 break;
         }
