@@ -26,6 +26,7 @@ import com.example.wemeet.pojo.user.User;
 import com.example.wemeet.pojo.user.UserInterface;
 import com.example.wemeet.util.NetworkUtil;
 import com.example.wemeet.util.ReturnVO;
+import com.google.android.material.chip.ChipGroup;
 
 import java.sql.Timestamp;
 
@@ -141,12 +142,25 @@ public class AddBugActivity extends AppCompatActivity {
                 bug.setChoiceQuestion(choiceQuestion);
                 break;
             case R.id.button_add_virus_point:
+                ChipGroup typeGroup = findViewById(R.id.type_group);
+                int checkedTypeId = typeGroup.getCheckedChipId();
+                int status = 1;
+                switch (checkedTypeId){
+                    case R.id.symptoms:
+                        break;
+                    case R.id.suspected:
+                        status = 2;
+                        break;
+                    case R.id.confirmed:
+                        status = 3;
+                        break;
+                }
                 score = 0;
                 virusPoint
                         .setDescription(((EditText) findViewById(R.id.editText_description)).getText().toString())
                         .setSymptoms(symptomsEditText.getText().toString())
                         .setDiseaseStartTime(diseaseStartTime)
-                        .setStatus(1)
+                        .setStatus(status)
                         .setType(4)
                         .setPublishTime(new Timestamp(milli));
                 bug.setVirusPoint(virusPoint);
