@@ -98,6 +98,7 @@ public class ShowVirusActivity extends DialogFragment {
                                     @Override
                                     public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
                                         Toast.makeText(getActivity(), "刪除成功", Toast.LENGTH_SHORT).show();
+                                        ShowVirusActivity.this.dismiss();
                                         reloadMap();
                                     }
 
@@ -107,6 +108,7 @@ public class ShowVirusActivity extends DialogFragment {
 
                                     }
                                 });
+//                        dismiss();
                     })
                     .setNegativeButton("取消",(dialog, witch) -> dialog.dismiss()).create().show();
 
