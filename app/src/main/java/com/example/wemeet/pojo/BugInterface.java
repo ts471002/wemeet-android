@@ -8,6 +8,7 @@ import java.util.Set;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -35,6 +36,9 @@ public interface BugInterface {
 
     @PUT("bug/{id}")
     Call<ReturnVO> updateBug(@Path("id") Long id, @Body Bug bug);
+
+    @DELETE("bug/{id}")
+    Call<ReturnVO> deleteBug(@Path("id") Long id);
 
     @Multipart
     @POST("uploadCredential/{bugId}")
