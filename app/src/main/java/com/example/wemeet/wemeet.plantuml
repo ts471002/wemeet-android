@@ -1,0 +1,199 @@
+@startuml
+
+title __WEMEET's Class Diagram__\n
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.AddBugActivity {
+          ~ aInput : EditText
+          ~ bInput : EditText
+          ~ cInput : EditText
+          ~ dInput : EditText
+          ~ questionTextInput : EditText
+          ~ scoreInput : EditText
+          ~ survivalTimeEditText : EditText
+          - diseaseStartTime : Timestamp
+          - symptomsEditText : EditText
+          + addBug()
+          + chooseTime()
+          # onCreate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.AddBugActivity.TextChange {
+          + afterTextChanged()
+          + beforeTextChanged()
+          + onTextChanged()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.ChangeLevelActivity {
+          - filePath : TextView
+          + onActivityResult()
+          + onCreateView()
+          + onResume()
+          - getDataColumn()
+          - getPath()
+          - isDownloadsDocument()
+          - isExternalStorageDocument()
+          - isMediaDocument()
+          - reloadMap()
+          {static} - upload()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.InitActivity {
+          + hasLoggedIn()
+          # onCreate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.LoginActivity {
+          {static} + LOGGED_IN : String
+          {static} + PREFS_NAME : String
+          {static} + USER_EMAIL : String
+          {static} + USER_ROLE : String
+          + role : int
+          ~ emailInput : EditText
+          ~ passwordInput : EditText
+          ~ roleSwitch : SwitchMaterial
+          + login()
+          # onCreate()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.LoginActivity.EditTextChange {
+          + afterTextChanged()
+          + beforeTextChanged()
+          + onTextChanged()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.MainActivity {
+          + locationClient : AMapLocationClient
+          + locationListener : AMapLocationListener
+          {static} + myLat : double
+          {static} + myLon : double
+          + option : AMapLocationClientOption
+          {static} + range : double
+          ~ aMap : AMap
+          ~ checkedChipIdMap : Map<String, Integer>
+          ~ mapView : MapView
+          - destMarker : Marker
+          - located : boolean
+          - mDrawerLayout : DrawerLayout
+          - mPopupWindow : PopupWindow
+          - marker : Marker
+          - markerList : List<Marker>
+          - tag_networkError : String
+          + logout()
+          + onCreateOptionsMenu()
+          + onOptionsItemSelected()
+          + onRequestPermissionsResult()
+          + plantBugs()
+          + showAroundBugs()
+          # onCreate()
+          # onDestroy()
+          # onPause()
+          # onResume()
+          # onSaveInstanceState()
+          # onStart()
+          # onStop()
+          - filterMarkersOnMap()
+          - getUserEmail()
+          - getUserRole()
+          - initFilter()
+          - isChoiceQuestionMarker()
+          - isConfirmedBugMarker()
+          - isSuspectedBugMarker()
+          - isSymptomBugMarker()
+          - locateMyPosition()
+          - requestPermissions()
+          - showPopWindow()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.ShowQuestionActivity {
+          - message : String
+          - score : double
+          - userAnswer : String
+          + onCreateView()
+          + onResume()
+          - reloadMap()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.ShowVirusActivity {
+          + onCreateView()
+          + onResume()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      class com.example.wemeet.UserCenterActivity {
+          + getCatchBugRecord()
+          + getPlantBugsRecord()
+          # onCreate()
+          - getUserEmail()
+      }
+    }
+  }
+  
+
+  com.example.wemeet.AddBugActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.wemeet.AddBugActivity +-down- com.example.wemeet.AddBugActivity.TextChange
+  com.example.wemeet.AddBugActivity.TextChange .up.|> android.text.TextWatcher
+  com.example.wemeet.ChangeLevelActivity -up-|> androidx.fragment.app.DialogFragment
+  com.example.wemeet.InitActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.wemeet.LoginActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.wemeet.LoginActivity +-down- com.example.wemeet.LoginActivity.EditTextChange
+  com.example.wemeet.LoginActivity.EditTextChange .up.|> android.text.TextWatcher
+  com.example.wemeet.MainActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.wemeet.ShowQuestionActivity -up-|> androidx.fragment.app.DialogFragment
+  com.example.wemeet.ShowVirusActivity -up-|> androidx.fragment.app.DialogFragment
+  com.example.wemeet.UserCenterActivity -up-|> androidx.appcompat.app.AppCompatActivity
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

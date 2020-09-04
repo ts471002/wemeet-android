@@ -94,12 +94,31 @@ public class ChangeLevelActivity extends DialogFragment {
             Long bugID = bug.getBugProperty().getBugID();
 //            bug.setVirusPoint(new VirusPoint().setStatus(toLevel));
             bug.getVirusPoint().setStatus(toLevel);
+
+            File file = new File(filePath.getText().toString());
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part bodyFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
             NetworkUtil.getRetrofit().create(BugInterface.class)
-                    .updateBug(bugID, bug)
+                    .uploadCredential(bugID, bodyFile)
                     .enqueue(new Callback<ReturnVO>() {
                         @Override
                         public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
+
+                        }
+                    });
+
+            NetworkUtil.getRetrofit().create(BugInterface.class)
+                    .updateBug(bugID, bug)                   .enqueue(new Callback<ReturnVO>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
                             // nothing to do. Maybe something to check
+
                         }
 
                         @Override

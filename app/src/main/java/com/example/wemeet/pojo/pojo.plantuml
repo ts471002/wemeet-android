@@ -1,0 +1,350 @@
+@startuml
+
+title __POJO's Class Diagram__\n
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.Bug {
+            + Bug()
+            + equals()
+            + getBugProperty()
+            + getChoiceQuestion()
+            + getMoment()
+            + getNarrativeQuestion()
+            + getPlanter()
+            + getVirusPoint()
+            + hashCode()
+            + setBugProperty()
+            + setChoiceQuestion()
+            + setMoment()
+            + setNarrativeQuestion()
+            + setPlanter()
+            + setVirusPoint()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.BugContent {
+            - bugContentId : Long
+            - publishTime : Timestamp
+            - type : Integer
+            + BugContent()
+            + equals()
+            + getBugContentId()
+            + getPublishTime()
+            + getType()
+            + hashCode()
+            + setBugContentId()
+            + setPublishTime()
+            + setType()
+            + toString()
+            # canEqual()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        interface com.example.wemeet.pojo.BugInterface {
+            {abstract} + addBug()
+            {abstract} + addUserCatchesBugConstraint()
+            {abstract} + getAroundBugs()
+            {abstract} + getCatchRecordsByEmail()
+            {abstract} + updateBug()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.BugProperty {
+            - bugID : Long
+            - caughtRecords : Set<CatcherBugRecord>
+            - destLatitude : Double
+            - destLongitude : Double
+            - lifeCount : Integer
+            - movable : boolean
+            - restLifeCount : Integer
+            - startLatitude : Double
+            - startLongitude : Double
+            - startTime : Timestamp
+            - survivalTime : Integer
+            - tags : List<String>
+            - temperature : Integer
+            + BugProperty()
+            + equals()
+            + getBugContent()
+            + getBugID()
+            + getCaughtRecords()
+            + getDestLatitude()
+            + getDestLongitude()
+            + getLifeCount()
+            + getMessage()
+            + getPlanter()
+            + getRestLifeCount()
+            + getStartLatitude()
+            + getStartLongitude()
+            + getStartTime()
+            + getSurvivalTime()
+            + getTags()
+            + getTemperature()
+            + hashCode()
+            + isMovable()
+            + setBugContent()
+            + setBugID()
+            + setCaughtRecords()
+            + setDestLatitude()
+            + setDestLongitude()
+            + setLifeCount()
+            + setMessage()
+            + setMovable()
+            + setPlanter()
+            + setRestLifeCount()
+            + setStartLatitude()
+            + setStartLongitude()
+            + setStartTime()
+            + setSurvivalTime()
+            + setTags()
+            + setTemperature()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.CatcherBugKey {
+            - bugId : Long
+            - userId : Long
+            + CatcherBugKey()
+            + equals()
+            + getBugId()
+            + getUserId()
+            + hashCode()
+            + setBugId()
+            + setUserId()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.CatcherBugRecord {
+            - userAnswer : String
+            + CatcherBugRecord()
+            + equals()
+            + getCatcher()
+            + getCaughtBug()
+            + getId()
+            + getUserAnswer()
+            + hashCode()
+            + setCatcher()
+            + setCaughtBug()
+            + setId()
+            + setUserAnswer()
+            + toString()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.ChoiceQuestion {
+            - choiceA : String
+            - choiceB : String
+            - choiceC : String
+            - choiceD : String
+            - correctAnswer : String
+            - score : Integer
+            + getChoiceA()
+            + getChoiceB()
+            + getChoiceC()
+            + getChoiceD()
+            + getCorrectAnswer()
+            + getQuestion()
+            + getScore()
+            + setChoiceA()
+            + setChoiceB()
+            + setChoiceC()
+            + setChoiceD()
+            + setCorrectAnswer()
+            + setQuestion()
+            + setScore()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.ContentDesc {
+            - pictureContent : byte[]
+            - textContent : String
+            - videoContent : String
+            + getPictureContent()
+            + getTextContent()
+            + getVideoContent()
+            + setPictureContent()
+            + setTextContent()
+            + setVideoContent()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.Message {
+            - messageID : Long
+            + Message()
+            + equals()
+            + getContentDesc()
+            + getMessageID()
+            + getUser()
+            + hashCode()
+            + setContentDesc()
+            + setMessageID()
+            + setUser()
+            + toString()
+            # canEqual()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.Moment {
+            + getContentDesc()
+            + setContentDesc()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.NarrativeQuestion {
+            - correctAnswer : String
+            - score : Integer
+            - userAnswer : String
+            + getCorrectAnswer()
+            + getQuestion()
+            + getScore()
+            + getUserAnswer()
+            + setCorrectAnswer()
+            + setQuestion()
+            + setScore()
+            + setUserAnswer()
+        }
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace om.example.wemeet {
+      namespace pojo {
+        class com.example.wemeet.pojo.VirusPoint {
+            - description : String
+            - diseaseStartTime : Timestamp
+            - infectious : Boolean
+            - status : Integer
+            - symptoms : String
+            - wayOfInfect : String
+            + VirusPoint()
+            + equals()
+            + getDescription()
+            + getDiseaseStartTime()
+            + getInfectious()
+            + getStatus()
+            + getSymptoms()
+            + getWayOfInfect()
+            + hashCode()
+            + setDescription()
+            + setDiseaseStartTime()
+            + setInfectious()
+            + setStatus()
+            + setSymptoms()
+            + setWayOfInfect()
+            + toString()
+            # canEqual()
+        }
+      }
+    }
+  }
+  
+
+  com.example.wemeet.pojo.Bug .up.|> java.io.Serializable
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.BugProperty : bugProperty
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.ChoiceQuestion : choiceQuestion
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.Moment : moment
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.NarrativeQuestion : narrativeQuestion
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.user.User : planter
+  com.example.wemeet.pojo.Bug o-- com.example.wemeet.pojo.VirusPoint : virusPoint
+  com.example.wemeet.pojo.BugContent .up.|> java.io.Serializable
+  com.example.wemeet.pojo.BugProperty .up.|> java.io.Serializable
+  com.example.wemeet.pojo.BugProperty o-- com.example.wemeet.pojo.BugContent : bugContent
+  com.example.wemeet.pojo.BugProperty o-- com.example.wemeet.pojo.Message : message
+  com.example.wemeet.pojo.BugProperty o-- com.example.wemeet.pojo.user.User : planter
+  com.example.wemeet.pojo.CatcherBugKey .up.|> java.io.Serializable
+  com.example.wemeet.pojo.CatcherBugRecord .up.|> java.io.Serializable
+  com.example.wemeet.pojo.CatcherBugRecord o-- com.example.wemeet.pojo.user.User : catcher
+  com.example.wemeet.pojo.CatcherBugRecord o-- com.example.wemeet.pojo.BugProperty : caughtBug
+  com.example.wemeet.pojo.CatcherBugRecord o-- com.example.wemeet.pojo.CatcherBugKey : id
+  com.example.wemeet.pojo.ChoiceQuestion .up.|> java.io.Serializable
+  com.example.wemeet.pojo.ChoiceQuestion -up-|> com.example.wemeet.pojo.BugContent
+  com.example.wemeet.pojo.ChoiceQuestion o-- com.example.wemeet.pojo.ContentDesc : question
+  com.example.wemeet.pojo.ContentDesc .up.|> java.io.Serializable
+  com.example.wemeet.pojo.Message .up.|> java.io.Serializable
+  com.example.wemeet.pojo.Message o-- com.example.wemeet.pojo.ContentDesc : contentDesc
+  com.example.wemeet.pojo.Message o-- com.example.wemeet.pojo.user.User : user
+  com.example.wemeet.pojo.Moment .up.|> java.io.Serializable
+  com.example.wemeet.pojo.Moment -up-|> com.example.wemeet.pojo.BugContent
+  com.example.wemeet.pojo.Moment o-- com.example.wemeet.pojo.ContentDesc : contentDesc
+  com.example.wemeet.pojo.NarrativeQuestion .up.|> java.io.Serializable
+  com.example.wemeet.pojo.NarrativeQuestion -up-|> com.example.wemeet.pojo.BugContent
+  com.example.wemeet.pojo.NarrativeQuestion o-- com.example.wemeet.pojo.ContentDesc : question
+  com.example.wemeet.pojo.VirusPoint .up.|> java.io.Serializable
+  com.example.wemeet.pojo.VirusPoint -up-|> com.example.wemeet.pojo.BugContent
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
