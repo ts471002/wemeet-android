@@ -78,4 +78,12 @@ public class BugProperty implements Serializable {
     public int hashCode() {
         return bugID.hashCode();
     }
+
+    private String address;
+
+    private byte[] credential;
+
+    private String credentialFileName;
+
+    private String credentialFileType;
 }

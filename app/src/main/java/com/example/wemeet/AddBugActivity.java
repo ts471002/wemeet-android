@@ -14,6 +14,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.example.wemeet.pojo.Bug;
@@ -30,9 +34,6 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.sql.Timestamp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -106,6 +107,7 @@ public class AddBugActivity extends AppCompatActivity {
         bugProperty
                 .setStartLatitude(intent.getDoubleExtra("lat", 0))
                 .setStartLongitude(intent.getDoubleExtra("lon", 0))
+                .setAddress(intent.getStringExtra("address"))
                 .setStartTime(new Timestamp(milli))
                 .setLifeCount(10)
                 .setRestLifeCount(10);

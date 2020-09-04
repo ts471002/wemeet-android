@@ -18,6 +18,15 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
@@ -32,6 +41,11 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.utils.overlay.MovingPointOverlay;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeQuery;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
@@ -53,14 +67,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -495,6 +501,26 @@ public class MainActivity extends AppCompatActivity {
         }
         if ("确认".equals(command)) {
             LatLng startLatLng = marker.getPosition();
+            // 获取虫子种植的地址
+            final String[] address = new String[1];
+            GeocodeSearch geocodeSearch = new GeocodeSearch(this);
+            geocodeSearch.setOnGeocodeSearchListener(new GeocodeSearch.OnGeocodeSearchListener() {
+                @Override
+                public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+                    if (1000 == i) {
+                        address[0] = regeocodeResult.getRegeocodeAddress().getFormatAddress();
+                    } else {
+                        Log.e("TAG-------------------------", "onRegeocodeSearched: 失败");
+                    }
+                }
+
+                @Override
+                public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
+
+                }
+            });
+            RegeocodeQuery query = new RegeocodeQuery(new LatLonPoint(startLatLng.latitude, startLatLng.longitude), 200, GeocodeSearch.AMAP);
+            geocodeSearch.getFromLocationAsyn(query);
             LatLng destLatLng = null;
             boolean movable = false;
             if (destMarker != null) {
@@ -526,6 +552,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         intent.putExtra("lat", startLatLng.latitude);
                         intent.putExtra("lon", startLatLng.longitude);
+                        intent.putExtra("address", address[0]);
                         if (finalMovable) {
                             intent.putExtra("movable", true);
                             intent.putExtra("destLat", finalDestLatLng.latitude);
