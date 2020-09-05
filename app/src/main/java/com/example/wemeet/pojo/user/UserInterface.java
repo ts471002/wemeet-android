@@ -1,6 +1,6 @@
 package com.example.wemeet.pojo.user;
 
-import com.example.wemeet.pojo.Bug;
+import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.util.ReturnVO;
 
 import java.util.List;
@@ -20,12 +20,12 @@ public interface UserInterface {
     @POST("user/login")
     Call<ReturnVO> login(@Body User user);
 
-    @PUT("user")
-    Call<ReturnVO> updateUser(@Body User user);
+//    @PUT("user")
+//    Call<ReturnVO> updateUser(@Body User user);
 
     @PUT("user/email/{email}/score/{score}")
     Call<ReturnVO> changeScoreOfUser(@Path("email") String email, @Path("score") double score);
 
     @GET("user/plantBugs")
-    Call<List<Bug>> getPlantBugsByUserEmail(@Query("email") String email);
+    Call<List<BugProperty>> getPlantBugsByUserEmail(@Query("email") String email);
 }

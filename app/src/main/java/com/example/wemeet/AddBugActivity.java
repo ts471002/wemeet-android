@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.ChoiceQuestion;
@@ -96,7 +95,6 @@ public class AddBugActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)   // 26
     public void addBug(View view) {
-        Bug bug = new Bug();
         BugProperty bugProperty = new BugProperty();
         ChoiceQuestion choiceQuestion = new ChoiceQuestion();
         VirusPoint virusPoint = new VirusPoint();
@@ -122,7 +120,6 @@ public class AddBugActivity extends AppCompatActivity {
         bugProperty
                 .setDestLatitude(intent.getDoubleExtra("destLat", bugProperty.getStartLatitude()))
                 .setDestLongitude(intent.getDoubleExtra("destLon", bugProperty.getStartLongitude()));
-        bug.setBugProperty(bugProperty);
 
         switch (view.getId()) {
             case R.id.button_add_bug:
@@ -141,7 +138,7 @@ public class AddBugActivity extends AppCompatActivity {
                 String answer = ((RadioButton) findViewById(radioGroup.getCheckedRadioButtonId())).getText().toString();
                 choiceQuestion.setCorrectAnswer(answer);
 
-                bug.setChoiceQuestion(choiceQuestion);
+                bugProperty.setBugContent(choiceQuestion);
                 break;
             case R.id.button_add_virus_point:
                 ChipGroup typeGroup = findViewById(R.id.type_group);
@@ -165,7 +162,7 @@ public class AddBugActivity extends AppCompatActivity {
                         .setStatus(status)
                         .setType(4)
                         .setPublishTime(new Timestamp(milli));
-                bug.setVirusPoint(virusPoint);
+                bugProperty.setBugContent(virusPoint);
                 break;
         }
 
@@ -178,10 +175,10 @@ public class AddBugActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                         User planter = response.body();
-                        bug.setPlanter(planter);
+                        bugProperty.setPlanter(planter);
 
                         NetworkUtil.getRetrofit().create(BugInterface.class)
-                                .addBug(bug)
+                                .addBug(bugProperty)
                                 .enqueue(new Callback<ReturnVO>() {
                                     @Override
                                     public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {

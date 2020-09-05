@@ -1,6 +1,6 @@
 package com.example.wemeet.util;
 
-import com.example.wemeet.pojo.Bug;
+import com.example.wemeet.pojo.BugProperty;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class MarkerInfo {
-    private Bug bug;
+    private BugProperty bugProperty;
     private boolean caught;
     private String userAnswer;
 }

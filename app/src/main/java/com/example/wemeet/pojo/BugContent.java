@@ -1,5 +1,8 @@
 package com.example.wemeet.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -16,6 +19,11 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 //@JsonIgnoreProperties(ignoreUnknown = true)   // 使得其可以接受包含其他多余字段的json串
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonSubTypes(value = {
+        @JsonSubTypes.Type(value = ChoiceQuestion.class, name = "1"),
+        @JsonSubTypes.Type(value = VirusPoint.class, name = "4"),
+})
 public class BugContent implements Serializable {
 
     private Long bugContentId;

@@ -10,15 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.wemeet.pojo.Bug;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 import com.example.wemeet.pojo.BugInterface;
+import com.example.wemeet.pojo.BugProperty;
+import com.example.wemeet.pojo.VirusPoint;
 import com.example.wemeet.util.NetworkUtil;
 import com.example.wemeet.util.ReturnVO;
 
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,10 +34,10 @@ public class ShowVirusActivity extends DialogFragment {
         view = inflater.inflate(R.layout.activity_bug_content,container,false);
         Bundle bundle = getArguments();
         assert bundle !=null;
-        Bug bug = (Bug) bundle.getSerializable("bug");
-        assert bug != null;
-        if (bug.getBugProperty().getBugContent().getType() == 4) {
-            switch (bug.getVirusPoint().getStatus()){
+        BugProperty bugProperty = (BugProperty) bundle.getSerializable("bug");
+        assert bugProperty != null;
+        if (bugProperty.getBugContent().getType() == 4) {
+            switch (((VirusPoint) bugProperty.getBugContent()).getStatus()){
                 case 1:
                     ((TextView)view.findViewById(R.id.level)).setText("症状虫子");
                     break;
@@ -46,14 +48,14 @@ public class ShowVirusActivity extends DialogFragment {
                     ((TextView)view.findViewById(R.id.level)).setText("确诊虫子");
                     break;
             }
-            ((TextView)view.findViewById(R.id.symptoms)).append("："+bug.getVirusPoint().getSymptoms());
-            if(bug.getVirusPoint().getDiseaseStartTime()!=null){
-                ((TextView)view.findViewById(R.id.symptoms_start_time)).append("："+bug.getVirusPoint().getDiseaseStartTime().toString());
+            ((TextView)view.findViewById(R.id.symptoms)).append("："+ ((VirusPoint) bugProperty.getBugContent()).getSymptoms());
+            if(((VirusPoint) bugProperty.getBugContent()).getDiseaseStartTime()!=null){
+                ((TextView)view.findViewById(R.id.symptoms_start_time)).append("："+ ((VirusPoint) bugProperty.getBugContent()).getDiseaseStartTime().toString());
             }
             else{
                 ((TextView)view.findViewById(R.id.symptoms_start_time)).append("：无");
             }
-            ((TextView)view.findViewById(R.id.note)).append("："+bug.getVirusPoint().getDescription());
+            ((TextView)view.findViewById(R.id.note)).append("："+ ((VirusPoint) bugProperty.getBugContent()).getDescription());
         }
 
         ImageView close = view.findViewById(R.id.close_button);
@@ -68,7 +70,7 @@ public class ShowVirusActivity extends DialogFragment {
         }
 
         changeLevel.setOnClickListener(view1 -> {
-            bundle.putSerializable("virusPoint",bug.getVirusPoint());
+            bundle.putSerializable("virusPoint", bugProperty.getBugContent());
             ChangeLevelActivity changeLevelActivity = new ChangeLevelActivity();
             changeLevelActivity.setArguments(bundle);
             assert getFragmentManager() != null;
@@ -80,7 +82,7 @@ public class ShowVirusActivity extends DialogFragment {
         if(role == 1){
             deleteVirus.setVisibility(View.VISIBLE);
         }else{
-            if(bug.getVirusPoint().getStatus() == 1){
+            if(((VirusPoint) bugProperty.getBugContent()).getStatus() == 1){
                 deleteVirus.setVisibility(View.VISIBLE);
             }else
                 deleteVirus.setVisibility(View.GONE);
@@ -93,7 +95,7 @@ public class ShowVirusActivity extends DialogFragment {
                     .setPositiveButton("确认",(dialog, witch) -> {
                         dialog.cancel();
                         NetworkUtil.getRetrofit().create(BugInterface.class)
-                                .deleteBug(bug.getBugProperty().getBugID())
+                                .deleteBug(bugProperty.getBugID())
                                 .enqueue(new Callback<ReturnVO>() {
                                     @Override
                                     public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {

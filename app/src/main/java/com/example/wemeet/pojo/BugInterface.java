@@ -19,10 +19,10 @@ import retrofit2.http.Query;
 
 public interface BugInterface {
     @GET("getAroundBugs")
-    Call<List<Bug>> getAroundBugs(@Query("userLon") double userLon, @Query("userLat") double userLat, @Query("meter") double meter);
+    Call<List<BugProperty>> getAroundBugs(@Query("userLon") double userLon, @Query("userLat") double userLat, @Query("meter") double meter);
 
     @POST("addBug")
-    Call<ReturnVO> addBug(@Body Bug bug);
+    Call<ReturnVO> addBug(@Body BugProperty bugProperty);
 
     @GET("addUserCatchesBugConstraint")
     Call<ReturnVO> addUserCatchesBugConstraint(
@@ -35,7 +35,7 @@ public interface BugInterface {
     Call<Set<CatcherBugRecord>> getCatchRecordsByEmail(@Query("email") String email);
 
     @PUT("bug/{id}")
-    Call<ReturnVO> updateBug(@Path("id") Long id, @Body Bug bug);
+    Call<ReturnVO> updateBug(@Path("id") Long id, @Body BugProperty bugProperty);
 
     @DELETE("bug/{id}")
     Call<ReturnVO> deleteBug(@Path("id") Long id);

@@ -10,8 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
+import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.CatcherBugRecord;
 import com.example.wemeet.pojo.user.User;
 import com.example.wemeet.pojo.user.UserInterface;
@@ -44,10 +44,10 @@ public class UserCenterActivity extends AppCompatActivity {
     public void getPlantBugsRecord(View view) {
         NetworkUtil.getRetrofit().create(UserInterface.class)
                 .getPlantBugsByUserEmail(getUserEmail())
-                .enqueue(new Callback<List<Bug>>() {
+                .enqueue(new Callback<List<BugProperty>>() {
                     @Override
-                    public void onResponse(Call<List<Bug>> call, Response<List<Bug>> response) {
-                        List<Bug> plantBugs = response.body();
+                    public void onResponse(Call<List<BugProperty>> call, Response<List<BugProperty>> response) {
+                        List<BugProperty> plantBugs = response.body();
                         if (plantBugs != null) {
                             Toast.makeText(UserCenterActivity.this, "种植个数：" + plantBugs.size(), Toast.LENGTH_SHORT).show();
                         } else {
@@ -56,7 +56,7 @@ public class UserCenterActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Bug>> call, Throwable t) {
+                    public void onFailure(Call<List<BugProperty>> call, Throwable t) {
                         Log.e("网络请求失败", "onFailure: getPlantBugsByUserEmail()", t);
                     }
                 });

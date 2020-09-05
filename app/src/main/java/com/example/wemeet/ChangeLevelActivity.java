@@ -20,39 +20,36 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.wemeet.pojo.Bug;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 import com.example.wemeet.pojo.BugInterface;
+import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.VirusPoint;
 import com.example.wemeet.util.NetworkUtil;
 import com.example.wemeet.util.ReturnVO;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChangeLevelActivity extends DialogFragment {
     private TextView filePath;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
-        view = inflater.inflate(R.layout.change_virus_level,container,false);
+        view = inflater.inflate(R.layout.change_virus_level, container, false);
         Bundle bundle = getArguments();
         assert bundle != null;
-        VirusPoint virusPoint = (VirusPoint)bundle.getSerializable("virusPoint");
-        Bug bug = (Bug) bundle.getSerializable("bug");
+        VirusPoint virusPoint = (VirusPoint) bundle.getSerializable("virusPoint");
+        BugProperty bugProperty = (BugProperty) bundle.getSerializable("bug");
 
         ImageView close = view.findViewById(R.id.close_button);
         close.setOnClickListener(v -> {
@@ -61,12 +58,12 @@ public class ChangeLevelActivity extends DialogFragment {
 //            bundle.putSerializable("bug",bug);
             showVirusActivity.setArguments(bundle);
             assert getFragmentManager() != null;
-            showVirusActivity.show(getFragmentManager(),"virus");
+            showVirusActivity.show(getFragmentManager(), "virus");
         });
 
         Spinner changeLevel = view.findViewById(R.id.level_change);
         assert virusPoint != null;
-        changeLevel.setSelection(virusPoint.getStatus()-1);
+        changeLevel.setSelection(virusPoint.getStatus() - 1);
 
         filePath = view.findViewById(R.id.filepath);
 
@@ -82,18 +79,18 @@ public class ChangeLevelActivity extends DialogFragment {
 
         submitChangeLevel.setOnClickListener(view1 -> {
             // 保存 status 到数据库
-            assert bug != null;
-            String url = "http://101.37.172.100/uploadCredential/"+bug.getBugProperty().getBugID();
-            try {
-                System.out.println(upload(url, filePath.getText().toString()));
-//                upload(url,filePath.getText().toString(),"file");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            int toLevel = changeLevel.getSelectedItemPosition()+1;
-            Long bugID = bug.getBugProperty().getBugID();
+            assert bugProperty != null;
+//            String url = "http://101.37.172.100/uploadCredential/" + bugProperty.getBugID();
+//            try {
+//                System.out.println(upload(url, filePath.getText().toString()));
+////                upload(url,filePath.getText().toString(),"file");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+            int toLevel = changeLevel.getSelectedItemPosition() + 1;
+            Long bugID = bugProperty.getBugID();
 //            bug.setVirusPoint(new VirusPoint().setStatus(toLevel));
-            bug.getVirusPoint().setStatus(toLevel);
+            ((VirusPoint) bugProperty.getBugContent()).setStatus(toLevel);
 
             File file = new File(filePath.getText().toString());
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -114,27 +111,27 @@ public class ChangeLevelActivity extends DialogFragment {
                     });
 
             NetworkUtil.getRetrofit().create(BugInterface.class)
-                    .updateBug(bugID, bug)                   .enqueue(new Callback<ReturnVO>() {
-                        @Override
-                        public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
-                            // nothing to do. Maybe something to check
+                    .updateBug(bugID, bugProperty).enqueue(new Callback<ReturnVO>() {
+                @Override
+                public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
+                    // nothing to do. Maybe something to check
 
-                        }
+                }
 
-                        @Override
-                        public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
+                @Override
+                public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
+                    t.printStackTrace();
+                }
+            });
 
             dismiss();
             reloadMap();
             Bundle newBundle = getArguments();
             ShowVirusActivity showVirusActivity = new ShowVirusActivity();
-            newBundle.putSerializable("bug", bug);
+            newBundle.putSerializable("bug", bugProperty);
             showVirusActivity.setArguments(newBundle);
             assert getFragmentManager() != null;
-            showVirusActivity.show(getFragmentManager(),"virus");
+            showVirusActivity.show(getFragmentManager(), "virus");
         });
         return view;
     }
@@ -148,8 +145,8 @@ public class ChangeLevelActivity extends DialogFragment {
         super.onResume();
     }
 
-    private void reloadMap(){
-        MainActivity mainActivity = (MainActivity)getActivity();
+    private void reloadMap() {
+        MainActivity mainActivity = (MainActivity) getActivity();
         assert mainActivity != null;
         mainActivity.aMap.clear();
         mainActivity.showAroundBugs(MainActivity.myLon, MainActivity.myLat, MainActivity.range);
@@ -289,23 +286,23 @@ public class ChangeLevelActivity extends DialogFragment {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    private static ResponseBody upload(String url, String filePath) throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("file", "file",
-                        RequestBody.create(MediaType.parse("multipart/form-data"), new File(filePath)))
-                .build();
-
-        Request request = new Request.Builder()
-                .header("Authorization", "Client-ID " + UUID.randomUUID())
-                .url(url)
-                .post(requestBody)
-                .build();
-
-        okhttp3.Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-        return response.body();
-    }
+//    private static ResponseBody upload(String url, String filePath) throws Exception {
+//        OkHttpClient client = new OkHttpClient();
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("file", "file",
+//                        RequestBody.create(MediaType.parse("multipart/form-data"), new File(filePath)))
+//                .build();
+//
+//        Request request = new Request.Builder()
+//                .header("Authorization", "Client-ID " + UUID.randomUUID())
+//                .url(url)
+//                .post(requestBody)
+//                .build();
+//
+//        okhttp3.Response response = client.newCall(request).execute();
+//        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+//
+//        return response.body();
+//    }
 }

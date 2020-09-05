@@ -19,8 +19,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
+import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.ChoiceQuestion;
 import com.example.wemeet.pojo.user.UserInterface;
 import com.example.wemeet.util.NetworkUtil;
@@ -53,8 +53,8 @@ public class ShowQuestionActivity extends DialogFragment {
         //显示内容
         Bundle bundle = getArguments();
         assert bundle != null;
-        Bug bug = (Bug) bundle.getSerializable("bug");
-        assert bug != null;
+        BugProperty bugProperty = (BugProperty) bundle.getSerializable("bug");
+        assert bugProperty != null;
 
         RadioGroup radioGroup = view.findViewById(R.id.radio_group_choices);
         RadioButton radioButtonA = view.findViewById(R.id.radioButtonA);
@@ -63,10 +63,10 @@ public class ShowQuestionActivity extends DialogFragment {
         RadioButton radioButtonD = view.findViewById(R.id.radioButtonD);
         Button submitButton = view.findViewById(R.id.submit_button);
 
-        if (bug.getBugProperty().getBugContent().getType() == 1) {
+        if (bugProperty.getBugContent().getType() == 1) {
             ((TextView) view.findViewById(R.id.questionTypeText)).setText("单项选择题");
 
-            ChoiceQuestion bugContent = bug.getChoiceQuestion();
+            ChoiceQuestion bugContent = (ChoiceQuestion) bugProperty.getBugContent();
             //题目
             ((TextView) view.findViewById(R.id.questionText)).setText(bugContent.getQuestion().getTextContent());
             //选项
@@ -94,7 +94,7 @@ public class ShowQuestionActivity extends DialogFragment {
             String userAnswer = bundle.getString("userAnswer");
             List<String> answerList = new ArrayList<>(Arrays.asList("A", "B", "C", "D"));
             int checkedIndex = answerList.indexOf(userAnswer);
-            int correctIndex = answerList.indexOf(bug.getChoiceQuestion().getCorrectAnswer().toUpperCase());
+            int correctIndex = answerList.indexOf(((ChoiceQuestion) bugProperty.getBugContent()).getCorrectAnswer().toUpperCase());
             RadioButton correctButton = (RadioButton) radioGroup.getChildAt(correctIndex);
             correctButton.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             correctButton.setTextColor(Color.parseColor("#4CAF50"));
@@ -108,8 +108,8 @@ public class ShowQuestionActivity extends DialogFragment {
 
 
         submitButton.setOnClickListener(view1 -> {
-            if (bug.getBugProperty().getBugContent().getType() == 1) {
-                ChoiceQuestion bugContent = bug.getChoiceQuestion();
+            if (bugProperty.getBugContent().getType() == 1) {
+                ChoiceQuestion bugContent = ((ChoiceQuestion) bugProperty.getBugContent());
                 String correctAnswer = bugContent.getCorrectAnswer().toUpperCase();
                 userAnswer = "";
                 if (radioButtonA.isChecked())
@@ -149,7 +149,7 @@ public class ShowQuestionActivity extends DialogFragment {
 
                 // 通过bug.getBugProperty().getBugID()和email 建立虫子与用户间，捕捉与被捕捉的关系
                 NetworkUtil.getRetrofit().create(BugInterface.class)
-                        .addUserCatchesBugConstraint(bug.getBugProperty().getBugID(), email, userAnswer)
+                        .addUserCatchesBugConstraint(bugProperty.getBugID(), email, userAnswer)
                         .enqueue(new Callback<ReturnVO>() {
                             @Override
                             public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {

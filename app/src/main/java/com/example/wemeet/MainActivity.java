@@ -46,7 +46,6 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
-import com.example.wemeet.pojo.Bug;
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.CatcherBugRecord;
@@ -174,17 +173,17 @@ public class MainActivity extends AppCompatActivity {
         // 对每个marker设置一个点击事件
         aMap.setOnInfoWindowClickListener(marker -> {
             MarkerInfo info = (MarkerInfo) marker.getObject();
-            if (info.getBug() != null) {
-                if (info.getBug().getVirusPoint() != null) {//疫情虫子
+            if (info.getBugProperty() != null) {
+                if (info.getBugProperty().getBugContent().getType() == 4) {//疫情虫子
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("bug", info.getBug());
+                    bundle.putSerializable("bug", info.getBugProperty());
                     bundle.putInt("role", getUserRole());
                     ShowVirusActivity showVirusActivity = new ShowVirusActivity();
                     showVirusActivity.setArguments(bundle);
                     showVirusActivity.show(getSupportFragmentManager(), "vitus");
                 } else {//题目虫子
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("bug", info.getBug());
+                    bundle.putSerializable("bug", info.getBugProperty());
                     bundle.putBoolean("caught", info.isCaught());
                     bundle.putString("userAnswer", info.getUserAnswer());
                     ShowQuestionActivity showQuestionActivity = new ShowQuestionActivity();
@@ -324,10 +323,10 @@ public class MainActivity extends AppCompatActivity {
     public void showAroundBugs(double userLon, double userLat, double meter) {
         BugInterface request = NetworkUtil.getRetrofit().create(BugInterface.class);
         request.getAroundBugs(userLon, userLat, meter)
-                .enqueue(new Callback<List<Bug>>() {
+                .enqueue(new Callback<List<BugProperty>>() {
                     @Override
-                    public void onResponse(@NonNull Call<List<Bug>> call, @NonNull Response<List<Bug>> response) {
-                        List<Bug> aroundBugs = response.body();
+                    public void onResponse(@NonNull Call<List<BugProperty>> call, @NonNull Response<List<BugProperty>> response) {
+                        List<BugProperty> aroundBugs = response.body();
 
                         SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0); // 0 - for private mode
                         String email = settings.getString(LoginActivity.USER_EMAIL, "error");
@@ -338,9 +337,8 @@ public class MainActivity extends AppCompatActivity {
                                     Set<CatcherBugRecord> records = response.body();
 
                                     if (aroundBugs != null) {
-                                        for (Bug bug : aroundBugs) {
+                                        for (BugProperty bugProperty : aroundBugs) {
                                             Marker marker = null;
-                                            final BugProperty bugProperty = bug.getBugProperty();
                                             if (bugProperty.getBugContent().getType() == 1) {
                                                 marker = aMap.addMarker(new MarkerOptions().position(new LatLng(
                                                         bugProperty.getStartLatitude(), bugProperty.getStartLongitude()))
@@ -351,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                                                         .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.question)))
                                                 );
                                                 MarkerInfo info = new MarkerInfo();
-                                                info.setBug(bug).setCaught(false).setUserAnswer(null);
+                                                info.setBugProperty(bugProperty).setCaught(false).setUserAnswer(null);
                                                 if (records != null) {
                                                     for (CatcherBugRecord record : records) {
                                                         if (record.getCaughtBug().equals(bugProperty)) {
@@ -369,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                                                 double bugLat = bugProperty.getStartLatitude();
                                                 double bugLon = bugProperty.getStartLongitude();
 
-                                                VirusPoint virusPoint = bug.getVirusPoint();
+                                                VirusPoint virusPoint = (VirusPoint) bugProperty.getBugContent();
 
                                                 // 根据不同状态获取不同图标
                                                 int virusIcon;
@@ -396,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
                                                         .icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), virusIcon)))
                                                 );
                                                 MarkerInfo info = new MarkerInfo();
-                                                info.setBug(bug).setCaught(false).setUserAnswer(null);
+                                                info.setBugProperty(bugProperty).setCaught(false).setUserAnswer(null);
                                                 marker.setObject(info);
                                             }
                                             markerList.add(marker);
@@ -427,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<List<Bug>> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<List<BugProperty>> call, @NonNull Throwable t) {
                         t.printStackTrace();
                     }
                 });
@@ -521,6 +519,7 @@ public class MainActivity extends AppCompatActivity {
             });
             RegeocodeQuery query = new RegeocodeQuery(new LatLonPoint(startLatLng.latitude, startLatLng.longitude), 200, GeocodeSearch.AMAP);
             geocodeSearch.getFromLocationAsyn(query);
+
             LatLng destLatLng = null;
             boolean movable = false;
             if (destMarker != null) {
@@ -705,31 +704,31 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isSymptomBugMarker(Marker marker) {
         MarkerInfo info = (MarkerInfo) marker.getObject();
-        if (info.getBug().getVirusPoint() != null) {
-            return info.getBug().getVirusPoint().getStatus() == 1;
+        if (info.getBugProperty().getBugContent().getType() == 4) {
+            return ((VirusPoint) info.getBugProperty().getBugContent()).getStatus() == 1;
         }
         return false;
     }
 
     private boolean isSuspectedBugMarker(Marker marker) {
         MarkerInfo info = (MarkerInfo) marker.getObject();
-        if (info.getBug().getVirusPoint() != null) {
-            return info.getBug().getVirusPoint().getStatus() == 2;
+        if (info.getBugProperty().getBugContent().getType() == 4) {
+            return ((VirusPoint) info.getBugProperty().getBugContent()).getStatus() == 2;
         }
         return false;
     }
 
     private boolean isConfirmedBugMarker(Marker marker) {
         MarkerInfo info = (MarkerInfo) marker.getObject();
-        if (info.getBug().getVirusPoint() != null) {
-            return info.getBug().getVirusPoint().getStatus() == 3;
+        if (info.getBugProperty().getBugContent().getType() == 4) {
+            return ((VirusPoint) info.getBugProperty().getBugContent()).getStatus() == 3;
         }
         return false;
     }
 
     private boolean isChoiceQuestionMarker(Marker marker) {
         MarkerInfo info = (MarkerInfo) marker.getObject();
-        return info.getBug().getChoiceQuestion() != null;
+        return info.getBugProperty().getBugContent().getType() == 1;
     }
 
     /**
