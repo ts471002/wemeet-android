@@ -36,6 +36,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
@@ -380,6 +381,8 @@ public class MainActivity extends AppCompatActivity {
                                                         break;
                                                     case 3:
                                                         virusIcon = R.drawable.virus_red;
+                                                        double meter = 100;
+                                                        paintShadows(bugLat, bugLon, meter);
                                                         break;
                                                     default:
                                                         throw new IllegalStateException("Unexpected value: " + virusPoint.getStatus());
@@ -737,5 +740,17 @@ public class MainActivity extends AppCompatActivity {
     private int getUserRole() {
         SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0); // 0 - for private mode
         return settings.getInt(LoginActivity.USER_ROLE, -1);
+    }
+
+    // 绘制确诊虫子在地图上显示一定范围的阴影
+    private void paintShadows(double lat, double lon, double meter) {
+        // radius()设置半径，单位是米
+        aMap.addCircle(
+                new CircleOptions()
+                        .center(new LatLng(lat, lon))
+                .radius(meter)
+                .fillColor(Color.argb(50, 255, 0, 0))
+                .strokeWidth(0)
+        );
     }
 }
