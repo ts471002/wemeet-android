@@ -19,9 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
+import android.widget.Toast;
 
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
@@ -32,6 +30,8 @@ import com.example.wemeet.util.ReturnVO;
 import java.io.File;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -55,7 +55,7 @@ public class ChangeLevelActivity extends DialogFragment {
         close.setOnClickListener(v -> {
             dismiss();
             ShowVirusActivity showVirusActivity = new ShowVirusActivity();
-//            bundle.putSerializable("bug",bug);
+            //            bundle.putSerializable("bug",bug);
             showVirusActivity.setArguments(bundle);
             assert getFragmentManager() != null;
             showVirusActivity.show(getFragmentManager(), "virus");
@@ -80,58 +80,48 @@ public class ChangeLevelActivity extends DialogFragment {
         submitChangeLevel.setOnClickListener(view1 -> {
             // 保存 status 到数据库
             assert bugProperty != null;
-//            String url = "http://101.37.172.100/uploadCredential/" + bugProperty.getBugID();
-//            try {
-//                System.out.println(upload(url, filePath.getText().toString()));
-////                upload(url,filePath.getText().toString(),"file");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
             int toLevel = changeLevel.getSelectedItemPosition() + 1;
             Long bugID = bugProperty.getBugID();
-//            bug.setVirusPoint(new VirusPoint().setStatus(toLevel));
             ((VirusPoint) bugProperty.getBugContent()).setStatus(toLevel);
 
-            File file = new File(filePath.getText().toString());
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            MultipartBody.Part bodyFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+            //如要变更等级 需上传文件
+            if (!filePath.getText().toString().equals("文件路径")) {
+                File file = new File(filePath.getText().toString());
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part bodyFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-            NetworkUtil.getRetrofit().create(BugInterface.class)
-                    .uploadCredential(bugID, bodyFile)
-                    .enqueue(new Callback<ReturnVO>() {
-                        @Override
-                        public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
+                NetworkUtil.getRetrofit().create(BugInterface.class)
+                        .uploadCredential(bugID, bodyFile)
+                        .enqueue(new Callback<ReturnVO>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
+                            @Override
+                            public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
 
-                        }
-                    });
+                            }
+                        });
+                NetworkUtil.getRetrofit().create(BugInterface.class)
+                        .updateBug(bugID, bugProperty)
+                        .enqueue(new Callback<ReturnVO>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
 
-            NetworkUtil.getRetrofit().create(BugInterface.class)
-                    .updateBug(bugID, bugProperty).enqueue(new Callback<ReturnVO>() {
-                @Override
-                public void onResponse(@NonNull Call<ReturnVO> call, @NonNull Response<ReturnVO> response) {
-                    // nothing to do. Maybe something to check
+                                dismiss();
+                                reloadMap();
+                                Toast.makeText(getActivity(), "更改成功", Toast.LENGTH_SHORT).show();
+                            }
 
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-
-            dismiss();
-            reloadMap();
-            Bundle newBundle = getArguments();
-            ShowVirusActivity showVirusActivity = new ShowVirusActivity();
-            newBundle.putSerializable("bug", bugProperty);
-            showVirusActivity.setArguments(newBundle);
-            assert getFragmentManager() != null;
-            showVirusActivity.show(getFragmentManager(), "virus");
+                            @Override
+                            public void onFailure(@NonNull Call<ReturnVO> call, @NonNull Throwable t) {
+                                t.printStackTrace();
+                            }
+                        });
+            } else {
+                Toast.makeText(getActivity(), "请选择文件", Toast.LENGTH_SHORT).show();
+            }
         });
         return view;
     }
@@ -162,13 +152,13 @@ public class ChangeLevelActivity extends DialogFragment {
             if ("file".equalsIgnoreCase(uri.getScheme())) {//使用第三方应用打开
                 path = uri.getPath();
                 filePath.setText(path);
-//                Toast.makeText(this, path + "11111", Toast.LENGTH_SHORT).show();
+                //                Toast.makeText(this, path + "11111", Toast.LENGTH_SHORT).show();
                 return;
             }
             //4.4以后
             path = getPath(getContext(), uri);
             filePath.setText(path);
-//            Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+            //            Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -286,23 +276,4 @@ public class ChangeLevelActivity extends DialogFragment {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-//    private static ResponseBody upload(String url, String filePath) throws Exception {
-//        OkHttpClient client = new OkHttpClient();
-//        RequestBody requestBody = new MultipartBody.Builder()
-//                .setType(MultipartBody.FORM)
-//                .addFormDataPart("file", "file",
-//                        RequestBody.create(MediaType.parse("multipart/form-data"), new File(filePath)))
-//                .build();
-//
-//        Request request = new Request.Builder()
-//                .header("Authorization", "Client-ID " + UUID.randomUUID())
-//                .url(url)
-//                .post(requestBody)
-//                .build();
-//
-//        okhttp3.Response response = client.newCall(request).execute();
-//        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-//
-//        return response.body();
-//    }
 }
