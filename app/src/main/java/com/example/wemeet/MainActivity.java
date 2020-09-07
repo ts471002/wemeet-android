@@ -27,6 +27,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.Circle;
 import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("InflateParams")
     private PopupWindow mPopupWindow;
     Map<String, Integer> checkedChipIdMap = new HashMap<>();
+    private List<Circle> circleList = new ArrayList<>();//保存已经显示的风险范围阴影
 
 
     @Override
@@ -249,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         ChipGroup timeGroup = contentView.findViewById(R.id.time);//时间筛选
         ChipGroup sortGroup = contentView.findViewById(R.id.sort);//排序筛选
         //设置初始选项
-        initFilter(typeGroup,rangeGroup,timeGroup,sortGroup);
+        initFilter(typeGroup, rangeGroup, timeGroup, sortGroup, riskRange);
         clear.setOnClickListener(view -> {
             typeGroup.check(R.id.all_type);
             rangeGroup.check(R.id.all_range);
@@ -264,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.range = 500;   // 米
                     break;
                 case R.id.range2:
+                case R.id.all_range:
                     MainActivity.range = 5000;
                     break;
                 case R.id.range3:
@@ -273,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.range = 10000 * 1000;  // 一万公里
                     break;
             }
+            // 如果更改范围则重新加载
             if (!checkedRangeId.equals(checkedChipIdMap.get("range"))) {
                 aMap.clear();
                 showAroundBugs(MainActivity.myLon, MainActivity.myLat, MainActivity.range);
@@ -281,17 +286,23 @@ public class MainActivity extends AppCompatActivity {
             checkedChipIdMap.put("range", rangeGroup.getCheckedChipId());
             checkedChipIdMap.put("time", timeGroup.getCheckedChipId());
             checkedChipIdMap.put("sort", sortGroup.getCheckedChipId());
+            if (riskRange.isChecked()) {
+                checkedChipIdMap.put("risk", 1);
+            } else {
+                checkedChipIdMap.put("risk", 0);
+            }
+
             filterMarkersOnMap();
             mPopupWindow.dismiss();
         });
         View toolBar = findViewById(R.id.toolbar);
-//        View rootView = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
-//        mPopupWindow.showAtLocation(rootView, Gravity.TOP, 0, 0);
+        //        View rootView = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
+        //        mPopupWindow.showAtLocation(rootView, Gravity.TOP, 0, 0);
         mPopupWindow.showAsDropDown(toolBar);
     }
 
     //设置初始选项
-    private void initFilter(ChipGroup type, ChipGroup range, ChipGroup time, ChipGroup sort) {
+    private void initFilter(ChipGroup type, ChipGroup range, ChipGroup time, ChipGroup sort, Switch riskRange) {
         //输入参数为当前筛选的内容
         //使用typeGroup.check(R.id.xxx);来设置当前的选项
         //例如
@@ -310,6 +321,14 @@ public class MainActivity extends AppCompatActivity {
         Integer sortChecked = checkedChipIdMap.getOrDefault("sort", R.id.default_sort);
         if (sortChecked != null) {
             sort.check(sortChecked);
+        }
+        Integer riskChecked = checkedChipIdMap.getOrDefault("risk", 1);
+        if (riskChecked != null) {
+            if (riskChecked == 1) {
+                riskRange.setChecked(true);
+            } else {
+                riskRange.setChecked(false);
+            }
         }
     }
 
@@ -387,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                                                     case 3:
                                                         virusIcon = R.drawable.virus_red;
                                                         double meter = 100;
-                                                        paintShadows(bugLat, bugLon, meter);
+                                                        circleList.add(paintShadows(bugLat, bugLon, meter));
                                                         break;
                                                     default:
                                                         throw new IllegalStateException("Unexpected value: " + virusPoint.getStatus());
@@ -453,30 +472,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 响应个人中心按钮的事件(如无特殊需求，此函数弃用)
-//    public void gotoUserCenter(View view) {
-//        SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0); // 0 - for private mode
-//        String email = settings.getString(LoginActivity.USER_EMAIL, "error");
-//        if (!"error".equals(email)) {
-//            // 获取当前用户
-//            UserInterface userInterface = NetworkUtil.getRetrofit().create(UserInterface.class);
-//            userInterface.getUserByEmail(email).enqueue(new Callback<User>() {
-//                @Override
-//                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-//                    User user = response.body();
-//                    Intent intent = new Intent(MainActivity.this, UserCenterActivity.class);
-//                    intent.putExtra("user", user);
-//                    startActivity(intent);
-//                }
-//
-//                @Override
-//                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-//                    t.printStackTrace();
-//                }
-//            });
-//        } else {
-//            Toast.makeText(this, "系统发生了不知名的错误", Toast.LENGTH_LONG).show();
-//        }
-//    }
+    //    public void gotoUserCenter(View view) {
+    //        SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0); // 0 - for private mode
+    //        String email = settings.getString(LoginActivity.USER_EMAIL, "error");
+    //        if (!"error".equals(email)) {
+    //            // 获取当前用户
+    //            UserInterface userInterface = NetworkUtil.getRetrofit().create(UserInterface.class);
+    //            userInterface.getUserByEmail(email).enqueue(new Callback<User>() {
+    //                @Override
+    //                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+    //                    User user = response.body();
+    //                    Intent intent = new Intent(MainActivity.this, UserCenterActivity.class);
+    //                    intent.putExtra("user", user);
+    //                    startActivity(intent);
+    //                }
+    //
+    //                @Override
+    //                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+    //                    t.printStackTrace();
+    //                }
+    //            });
+    //        } else {
+    //            Toast.makeText(this, "系统发生了不知名的错误", Toast.LENGTH_LONG).show();
+    //        }
+    //    }
 
     // 响应种植虫子按钮
     public void plantBugs(View view) {
@@ -552,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case 1:
                                 intent.putExtra("type", 4);
-                                intent.putExtra("role",getUserRole());
+                                intent.putExtra("role", getUserRole());
                                 break;
                             default:
                                 break;
@@ -579,9 +598,9 @@ public class MainActivity extends AppCompatActivity {
         if (located) {
             showAroundBugs(myLon, myLat, range);
         }
-//        // 初始视角移动到北邮
-//        aMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
-//                new LatLng(39.9643, 116.3557), 16, 0, 0)));
+        //        // 初始视角移动到北邮
+        //        aMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(
+        //                new LatLng(39.9643, 116.3557), 16, 0, 0)));
     }
 
     @Override
@@ -673,13 +692,13 @@ public class MainActivity extends AppCompatActivity {
         locationClient.startLocation();
 
         // 设置option场景
-//        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
-//        if (null != locationClient) {
-//            locationClient.setLocationOption(option);
-//            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
-//            locationClient.stopLocation();
-//            locationClient.startLocation();
-//        }
+        //        option.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
+        //        if (null != locationClient) {
+        //            locationClient.setLocationOption(option);
+        //            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
+        //            locationClient.stopLocation();
+        //            locationClient.startLocation();
+        //        }
     }
 
     private String getUserEmail() {
@@ -707,6 +726,11 @@ public class MainActivity extends AppCompatActivity {
             if (typeChecked.equals(R.id.question_type)) {
                 marker.setVisible(isChoiceQuestionMarker(marker));
             }
+        }
+        if (Objects.equals(checkedChipIdMap.getOrDefault("risk", 1), 1)) {
+            circleList.forEach(circle -> circle.setVisible(true));
+        } else {
+            circleList.forEach(circle -> circle.setVisible(false));
         }
     }
 
@@ -748,14 +772,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 绘制确诊虫子在地图上显示一定范围的阴影
-    private void paintShadows(double lat, double lon, double meter) {
+    private Circle paintShadows(double lat, double lon, double meter) {
         // radius()设置半径，单位是米
-        aMap.addCircle(
+        return aMap.addCircle(
                 new CircleOptions()
                         .center(new LatLng(lat, lon))
-                .radius(meter)
-                .fillColor(Color.argb(50, 255, 0, 0))
-                .strokeWidth(0)
+                        .radius(meter)
+                        .fillColor(Color.argb(50, 255, 0, 0))
+                        .strokeWidth(0)
         );
     }
 }
