@@ -16,9 +16,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-
 import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.ChoiceQuestion;
@@ -31,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,6 +94,7 @@ public class ShowQuestionActivity extends DialogFragment {
             List<String> answerList = new ArrayList<>(Arrays.asList("A", "B", "C", "D"));
             int checkedIndex = answerList.indexOf(userAnswer);
             int correctIndex = answerList.indexOf(((ChoiceQuestion) bugProperty.getBugContent()).getCorrectAnswer().toUpperCase());
+//            Toast.makeText(getActivity(),correctIndex,Toast.LENGTH_SHORT).show();
             RadioButton correctButton = (RadioButton) radioGroup.getChildAt(correctIndex);
             correctButton.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             correctButton.setTextColor(Color.parseColor("#4CAF50"));

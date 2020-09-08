@@ -5,20 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.example.wemeet.pojo.WeMeetMisc;
 import com.example.wemeet.pojo.user.User;
 import com.example.wemeet.pojo.user.UserInterface;
 import com.example.wemeet.util.NetworkUtil;
 import com.example.wemeet.util.ReturnVO;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOGGED_IN = "loggedIn";
     public static final String USER_EMAIL = "userEmail";
     public static final String USER_ROLE = "userRole";
+    public static final String AUTH_STRING = "authString";
     public int role = 0;
 
     EditText emailInput;
@@ -67,6 +69,10 @@ public class LoginActivity extends AppCompatActivity {
         User tempUser = new User();
         tempUser.setEmail(email).setPassword(password).setRole(role);
 
+        String credentials = email + ":" + password;
+        String authString = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        WeMeetMisc.authString = authString;
+
         UserInterface userInterface = NetworkUtil.getRetrofit().create(UserInterface.class);
         userInterface.login(tempUser).enqueue(new Callback<ReturnVO>() {
             @Override
@@ -88,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                                     editor.putBoolean(LOGGED_IN, true);
                                     editor.putString(USER_EMAIL, email);
                                     editor.putInt(USER_ROLE, user.getRole());
+                                    editor.putString(AUTH_STRING, authString);
                                     editor.apply();
 
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -101,6 +108,8 @@ public class LoginActivity extends AppCompatActivity {
                                     t.printStackTrace();
                                 }
                             });
+//                } else{
+//                    Toast.makeText(LoginActivity.this, "出错啦！"+response, Toast.LENGTH_SHORT).show();
                 }
             }
 

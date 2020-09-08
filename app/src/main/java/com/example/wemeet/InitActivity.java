@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.example.wemeet.pojo.WeMeetMisc;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class InitActivity extends AppCompatActivity {
@@ -18,6 +20,7 @@ public class InitActivity extends AppCompatActivity {
             startActivity(intent);
             InitActivity.this.finish();
         } else {
+            WeMeetMisc.authString = getAuthString();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             InitActivity.this.finish();
@@ -28,5 +31,10 @@ public class InitActivity extends AppCompatActivity {
     public boolean hasLoggedIn() {
         SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0); // 0 - for private mode
         return settings.getBoolean(LoginActivity.LOGGED_IN, false);
+    }
+
+    public String getAuthString(){
+        SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0);
+        return settings.getString(LoginActivity.AUTH_STRING, "");
     }
 }

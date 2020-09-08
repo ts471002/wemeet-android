@@ -43,6 +43,7 @@ import com.example.wemeet.pojo.BugInterface;
 import com.example.wemeet.pojo.BugProperty;
 import com.example.wemeet.pojo.CatcherBugRecord;
 import com.example.wemeet.pojo.VirusPoint;
+import com.example.wemeet.pojo.WeMeetMisc;
 import com.example.wemeet.pojo.user.User;
 import com.example.wemeet.pojo.user.UserInterface;
 import com.example.wemeet.util.MarkerInfo;
@@ -465,6 +466,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
         editor.remove(LoginActivity.LOGGED_IN);
         editor.remove(LoginActivity.USER_EMAIL);
+        editor.remove(WeMeetMisc.authString);
         editor.apply();
 
         Intent intent = new Intent(this, LoginActivity.class);
