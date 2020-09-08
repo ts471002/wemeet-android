@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:checkable="true"
             android:checked="true"
-            android:text="@string/全部" />
+            android:text="@string/_5km" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/range1"
@@ -119,7 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checkable="true"
-            android:text="@string/大范围" />
+            android:text="@string/全部" />
 
     </com.google.android.material.chip.ChipGroup>
 
@@ -222,6 +222,16 @@
             android:text="@string/热度" />
 
     </com.google.android.material.chip.ChipGroup>
+
+    <Switch
+        android:id="@+id/risk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:showText="false"
+        android:text="显示风险范围"
+        android:textOff="否"
+        android:textOn="是"
+         />
 
     <LinearLayout
         android:layout_width="wrap_content"
