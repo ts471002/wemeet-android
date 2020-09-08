@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
         ChipGroup rangeGroup = contentView.findViewById(R.id.range);//范围筛选
         ChipGroup timeGroup = contentView.findViewById(R.id.time);//时间筛选
         ChipGroup sortGroup = contentView.findViewById(R.id.sort);//排序筛选
+        Switch riskRange = contentView.findViewById(R.id.risk);//风险范围
         //设置初始选项
         initFilter(typeGroup, rangeGroup, timeGroup, sortGroup, riskRange);
         clear.setOnClickListener(view -> {
